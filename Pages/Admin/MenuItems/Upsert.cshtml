@@ -1,0 +1,95 @@
+@page
+@model FoodDelivery.Pages.Admin.MenuItems.Upsert
+
+@* enctype = "multipart/form-data" use for image upload *@
+<form method="post" enctype="multipart/form-data">
+    <partial name="_Notification" />
+    <div class="border p-3 mt-4">
+        <input type="hidden" asp-for="@Model.menuItem.Id">
+        <div class="row pb-2">
+            <div class="col-9">
+                <h2 class="text-primary pl-3">
+                    @(Model.menuItem.Id != null ? "Update" : "Create") Menu Item</h2>
+                <span asp-validation-summary="All"></span>
+                <div class="mb-3">
+                    <label asp-for="@Model.menuItem.Name"></label>
+                    <input asp-for="@Model.menuItem.Name" class="form-control" />
+                    <span asp-validation-for="@Model.menuItem.Name" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="@Model.menuItem.Description"></label>
+                    <textarea asp-for="@Model.menuItem.Description" class="form-control"></textarea>
+                    <span asp-validation-for="@Model.menuItem.Description" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="@Model.menuItem.Price"></label>
+                    <input asp-for="@Model.menuItem.Price" class="form-control" />
+                    <span asp-validation-for="@Model.menuItem.Price" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="@Model.menuItem.Image"></label>
+                    <input type="file" name="files" id="uploadBox" asp-for="@Model.menuItem.Image"
+                        class="form-control" />
+                </div>
+                <div class="mb-3">
+                    <label asp-for="@Model.menuItem.CategoryModelId"></label>
+                    <select asp-for="@Model.menuItem.CategoryModelId" asp-items="@Model.CategoryList"
+                        class="form-select">
+                        <option disabled selected> - Select Category</option>
+                    </select>
+                    <span asp-validation-for="@Model.menuItem.CategoryModelId" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="@Model.menuItem.FoodTypeId"></label>
+                    <select asp-for="@Model.menuItem.FoodTypeId" asp-items="@Model.FoodTypeList" class="form-select">
+                        <option disabled selected> - Select Food Type</option>
+                    </select>
+                    <span asp-validation-for="@Model.menuItem.FoodTypeId" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-3">
+                @if(Model.menuItem.Id!=null) {
+                    <img src="@Model.menuItem.Image" width="100%" style="border-radius: 5px; border:1px solid #bbb9b9"/>
+                }
+            </div>
+        </div>
+        @if(Model.menuItem.Id !=0)
+        {
+            <button type="submit" class="btn btn-primary" style="width: 150px;">Update</button>
+        }
+        else{
+            <button type="submit" onclick="ValidedImage()" class="btn btn-primary" style="width: 150px;">Create</button>
+        }
+        <a asp-page="Index" class="btn btn-secondary" style="width: 150px">Back To Manu</a>
+    </div>
+</form>
+
+@section Scripts{
+    <script>
+        function ValidedImage(){
+            if(document.getElementById("uploadBox").value==""){
+                Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Please upload an image!'
+                })
+            }
+        }
+
+        tinymce.init({
+            selector: 'textarea',
+            plugins: 'ai tinycomments mentions anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed permanentpen footnotes advtemplate advtable advcode editimage tableofcontents mergetags powerpaste tinymcespellchecker autocorrect a11ychecker typography inlinecss',
+            toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | align lineheight | tinycomments | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+            tinycomments_mode: 'embedded',
+            tinycomments_author: 'Author name',
+            mergetags_list: [
+                { value: 'First.Name', title: 'First Name' },
+                { value: 'Email', title: 'Email' },
+            ],
+            ai_request: (request, respondWith) => respondWith.string(() => Promise.reject("See docs to implement AI Assistant"))
+        });
+    </script>
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+}

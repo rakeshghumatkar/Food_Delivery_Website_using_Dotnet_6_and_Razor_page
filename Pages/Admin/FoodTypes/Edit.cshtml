@@ -1,0 +1,26 @@
+@page
+@model FoodDelivery.Pages.Admin.FoodTypes.Edit
+
+<form method="post">
+    <partial name="_Notification" />
+    <div class="border p-3 mt-4">
+        <input type="hidden" asp-for="@Model.FoodType.Id"/>
+        <div class="row pb-2">
+            <h2 class="text-primary pl-3">Create Food Type</h2>
+        </div>
+        <span asp-validation-summary="All" ></span>
+        <div class="mb-3">
+            <label asp-for="@Model.FoodType.Name"></label>
+            <input asp-for="@Model.FoodType.Name" class="form-control"/>
+            <span asp-validation-for="@Model.FoodType.Name" class="text-danger"></span>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 150px;">Update</button>
+        <a asp-page="Index" class="btn btn-secondary" style="width: 150px">Back To Manu</a>
+    </div>
+</form>
+
+@section Scripts{
+    @{
+        <partial name= "_ValidationScriptsPartial" />
+    }
+}
