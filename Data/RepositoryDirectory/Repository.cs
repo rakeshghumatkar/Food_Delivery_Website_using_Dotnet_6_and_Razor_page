@@ -24,9 +24,15 @@ namespace FoodDelivery.Data.RepositoryDirectory
             dbSet.Add(entity);
         }
 
-        public IEnumerable<T> GetAll(string? includeProperties = null)
+        public IEnumerable<T> GetAll(Expression<Func<T,bool>>? filter = null, Func<IQueryable<T>,IQueryable<T>>? orderby = null, string? includeProperties = null)
         {
+            //Applying filters
             IQueryable<T> query = dbSet;
+            if(filter!=null)
+            {
+                query = query.Where(filter);
+            }
+
             if(includeProperties!= null)
             {
                 foreach(var includeProperty in includeProperties.Split(new char[] {','}, StringSplitOptions.RemoveEmptyEntries))
@@ -34,17 +40,32 @@ namespace FoodDelivery.Data.RepositoryDirectory
                     query = query.Include(includeProperty);
                 }
             }
+
+            //order by using display order
+            if(orderby!= null)
+            {
+                return orderby(query).ToList();
+            }
+
             return query.ToList();
         }
 
-        public T GetFirstOrDefault(Expression<Func<T, bool>>? filter)
+        public T GetFirstOrDefault(Expression<Func<T, bool>>? filter = null, string? includeProperties = null)
         {
-            IQueryable<T> quary = dbSet;
+            IQueryable<T> query = dbSet;
             if(filter!=null)
             {
-                quary = quary.Where(filter);
+                query = query.Where(filter);
             }
-            return quary.FirstOrDefault();
+
+            if(includeProperties!= null)
+            {
+                foreach(var includeProperty in includeProperties.Split(new char[] {','}, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(includeProperty);
+                }
+            }
+            return query.FirstOrDefault();
         }
 
         public void Remove(T entity)
